@@ -1,5 +1,6 @@
 import time
 import pulp
+import Levenshtein
 
 boin = [a for a in "aiueo"]
 
@@ -27,7 +28,6 @@ def target_name(xs, name: str, start: int):
 
 def solver(name="sora"):
     original_name = name
-    name += "x"
     size = len(name)
 
     # 問題の定義
@@ -84,12 +84,17 @@ def solver(name="sora"):
     result = target_name(xs, name, int(x_start.value()))
     return result
 
-
 if __name__ == '__main__':
     original_name = "sora"
 
     s = time.time()
-    result = solver(original_name)
+    result_name = solver(original_name + "x")
+    # result_name = solver(original_name.replace("x", ""))
+
+    # TODO: 先頭が固定になるので、一番いい位置に変える
+    s = len(result_name) // 2 - 1
+    xname = result_name[s:] + result_name[:s]
+
     print("time:", time.time() - s)
-    print("{}は{}になりました".format(original_name, result))
-    print("name_score({}) = {}".format(result, name_score(result)))
+    print("{}は{}になりました".format(original_name, xname))
+    print("name_score({}) = {}".format(xname, name_score(xname)))
