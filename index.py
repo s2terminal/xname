@@ -13,8 +13,15 @@ def name_score(name: str) -> int:
         is_boin = (s in boin)
     return score / (len(name) - 1)
 
-def target_name(xs, name: str, start: int):
+# 名前順列行列から文字列を復元する
+def target_name(xs, name: str):
     size = len(name)
+    start = 0
+    # 最初の文字を探す
+    for j in range(size):
+        if (all([xs[i][j].value() == 0 for i in range(size)])):
+            start = j
+
     ret = name[start]
     current = start
     for _ in range(size - 1):
@@ -40,8 +47,6 @@ def solver(name="sora"):
         xs.append(x)
     # 部分順回路排除用
     u = pulp.LpVariable.dicts('u', (i for i in range(size)), lowBound=1, upBound=size, cat='Integer')
-    # スタート地点
-    x_start = pulp.LpVariable('start', cat='Integer', lowBound=0, upBound=size - 1)
 
     # スコア生成用の定数配列の生成
     cs = []
@@ -60,8 +65,10 @@ def solver(name="sora"):
     # 制約条件
     # 各文字への行きと帰りはそれぞれ一度しか選ばれない
     for i in range(size):
-        prob += pulp.lpSum([xs[j][i] for j in range(size)]) == 1
-        prob += pulp.lpSum([xs[i][j] for j in range(size)]) == 1
+        prob += pulp.lpSum([xs[j][i] for j in range(size)]) <= 1
+        prob += pulp.lpSum([xs[i][j] for j in range(size)]) <= 1
+    # n文字(n-1回の連結)
+    prob += pulp.lpSum([pulp.lpSum([x2 for x2 in x1]) for x1 in xs]) == size - 1
 
     # おなじ文字には行かない
     for i in range(size):
@@ -69,31 +76,25 @@ def solver(name="sora"):
 
     # 部分順回路排除用
     # @see: http://www.ie110704.net/2020/08/15/pulp%E3%81%A7%E6%95%B0%E7%90%86%E6%9C%80%E9%81%A9%E5%8C%96%E5%95%8F%E9%A1%8C%EF%BC%88tsp%E3%80%81vrp%EF%BC%89/
-    for i in range(size):
-        for j in range(size):
+    for i in range(size-1):
+        for j in range(size-1):
             if i != j and (i != 0 and j != 0):
                 prob += u[i] - u[j] <= size * (1 - xs[i][j]) - 1
 
-    # スタート地点は文字列の中から選ぶ
-    prob += x_start <= size - 1
-    prob += 0 <= x_start
+    # 行きか帰りに一度は選ばれる
+    for i in range(size):
+        prob += pulp.lpSum([xs[i][j] for j in range(size)]) + pulp.lpSum([xs[j][i] for j in range(size)]) >= 1
 
     prob.solve()
     print("score:", prob.objective.value())
-    print(x_start.value()) # TODO: 制約条件が足りないので最初の文字しか選ばれない
-    result = target_name(xs, name, int(x_start.value()))
+    result = target_name(xs, name)
     return result
 
 if __name__ == '__main__':
     original_name = "sora"
 
     s = time.time()
-    result_name = solver(original_name + "x")
-    # result_name = solver(original_name.replace("x", ""))
-
-    # TODO: 先頭が固定になるので、一番いい位置に変える
-    s = len(result_name) // 2 - 1
-    xname = result_name[s:] + result_name[:s]
+    xname = solver(original_name + "x")
 
     print("time:", time.time() - s)
     print("{}は{}になりました".format(original_name, xname))
