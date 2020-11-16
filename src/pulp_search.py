@@ -1,16 +1,15 @@
 import time
 import pulp
-import Levenshtein
 
-boin = [a for a in "aiueo"]
+vowels = [a for a in "aiueo"]
 
 def name_score(name: str) -> int:
     score = 0
     is_boin = None
     for s in name:
-        if (is_boin is not None and (is_boin or (s in boin))):
+        if (is_boin is not None and (is_boin or (s in vowels))):
             score += 1
-        is_boin = (s in boin)
+        is_boin = (s in vowels)
     return score / (len(name) - 1)
 
 # 名前順列行列から文字列を復元する
@@ -38,6 +37,7 @@ def solver(name="sora"):
     size = len(name)
 
     # 問題の定義
+    print(pulp)
     prob = pulp.LpProblem('tsp', sense=pulp.LpMaximize)
 
     # 変数の生成
@@ -53,14 +53,14 @@ def solver(name="sora"):
     for i in range(size):
         cs.append([])
         for j in range(size):
-            if name[i] in boin or name[j] in boin:
+            if name[i] in vowels or name[j] in vowels:
                 cs[i].append(1)
             else:
                 cs[i].append(0)
 
     # 目的関数
     # TODO: x[?][x_start]は評価に入れない
-    prob += pulp.lpSum([pulp.lpDot(c, x) for c, x in zip(cs, xs)]) / size
+    prob += pulp.lpSum([pulp.lpDot(c, x) for c, x in zip(cs, xs)])
 
     # 制約条件
     # 各文字への行きと帰りはそれぞれ一度しか選ばれない
@@ -91,7 +91,7 @@ def solver(name="sora"):
     return result
 
 if __name__ == '__main__':
-    original_name = "sora"
+    original_name = input('input name: ')
 
     s = time.time()
     xname = solver(original_name + "x")
