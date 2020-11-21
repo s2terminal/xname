@@ -13,7 +13,6 @@ def name_score(name: str, original: str) -> int:
     return score
 
 def search_xname(original_name: str):
-    original_name = (original_name + 'x').lower()
     max_score = 0
     max_name = original_name
     for v in permutations([ n for n in original_name ]):
@@ -24,9 +23,4 @@ def search_xname(original_name: str):
         if (max_score < score):
             max_score = score
             max_name = name
-    return (max_name.title(), max_score)
-
-if __name__ == '__main__':
-    original_name = input('input name: ')
-    max_names, score = search_xname(original_name)
-    print("{}は{}になりました。スコア: {}".format(original_name, max_names, score))
+    return (max_name, max_score)

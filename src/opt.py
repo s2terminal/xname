@@ -15,7 +15,6 @@ def name_score(name: str, original: str) -> int:
     return score
 
 def random_search(name: str, times=10):
-    name += "x"
     size = len(name)
     best_score = -float('inf')
     best_name = name
@@ -44,10 +43,8 @@ def func(ary: typing.List, i: int) -> typing.List:
     ret.extend([val])
     return ret
 
-
 def random_search_func(name: str, times=10):
     original_name = name
-    name += "x"
     size = len(name)
     best_score = -float('inf')
     best_name = name
@@ -61,20 +58,3 @@ def random_search_func(name: str, times=10):
             best_score = score
             best_name = tmp_name
     return best_name, best_score
-
-
-if __name__ == '__main__':
-    # original_name = input('input name: ')
-    # xname = random_search(original_name)
-    # print(xname)
-
-    # l = [1,2,3,4]
-    # print(func(l, 0))
-    # print(func(l, 1))
-    # print(func(l, 2))
-    # print(func(l, 3))
-    # print(func(l, 4))
-
-    original_name = input('input name: ')
-    xname = random_search_func(original_name)
-    print(xname)

@@ -2,5 +2,5 @@
 
 ```
 $ docker-compose up
-$ docker-compose run --rm app  poetry run python index.py
+$ docker-compose exec app poetry run python main.py
 ```

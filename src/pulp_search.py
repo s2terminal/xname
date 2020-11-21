@@ -88,7 +88,7 @@ def solver(name="sora"):
     prob.solve()
     print("score:", prob.objective.value())
     result = target_name(xs, name)
-    return result
+    return (result, prob.objective.value())
 
 if __name__ == '__main__':
     original_name = input('input name: ')
