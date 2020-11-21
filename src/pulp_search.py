@@ -2,16 +2,7 @@ import time
 import pulp
 from pprint import pprint
 
-vowels = [a for a in "aiueo"]
-
-def name_score(name: str) -> int:
-    score = 0
-    is_boin = None
-    for s in name:
-        if (is_boin is not None and (is_boin or (s in vowels))):
-            score += 1
-        is_boin = (s in vowels)
-    return score / (len(name) - 1)
+from src.common import vowels
 
 # 名前順列行列から文字列を復元する
 def target_name(xs, name: str):
