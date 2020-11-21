@@ -1,5 +1,6 @@
 import time
 import pulp
+from pprint import pprint
 
 vowels = [a for a in "aiueo"]
 
@@ -21,15 +22,22 @@ def target_name(xs, name: str):
         if (all([xs[i][j].value() == 0 for i in range(size)])):
             start = j
 
+    # debug
+    # for i in range(size):
+    #     for j in range(size):
+    #         if xs[i][j].value() == 1:
+    #             print("debug: {}({}->{}): {}".format(xs[i][j], name[i], name[j], xs[i][j].value()))
+
     ret = name[start]
     current = start
     for _ in range(size - 1):
         for j in range(size):
             # print("{}({}->{}): {}".format(xs[current][j], name[current], name[j], xs[current][j].value()))
             if xs[current][j].value() == 1:
+                # print("{}({}->{}): {}".format(xs[current][j], name[current], name[j], xs[current][j].value()))
                 ret += name[j]
                 current = j
-                break
+                # break
     return ret
 
 def solver(name="sora"):
@@ -76,10 +84,10 @@ def solver(name="sora"):
 
     # 部分順回路排除用
     # @see: http://www.ie110704.net/2020/08/15/pulp%E3%81%A7%E6%95%B0%E7%90%86%E6%9C%80%E9%81%A9%E5%8C%96%E5%95%8F%E9%A1%8C%EF%BC%88tsp%E3%80%81vrp%EF%BC%89/
-    for i in range(size-1):
-        for j in range(size-1):
-            if i != j and (i != 0 and j != 0):
-                prob += u[i] - u[j] <= size * (1 - xs[i][j]) - 1
+    for i in range(size):
+        for j in range(size):
+            if i != j: # ハミルトン閉路ではi,j == 0のとき制約を追加しない
+                prob += u[i] - u[j] <= (1 - xs[i][j]) * size - 1
 
     # 行きか帰りに一度は選ばれる
     for i in range(size):
@@ -88,13 +96,17 @@ def solver(name="sora"):
     prob.solve()
     print("score:", prob.objective.value())
     result = target_name(xs, name)
+    # pprint([[x2.value() for x2 in x1] for x1 in xs])
+    # pprint([u1 for u1 in u])
+    # print(prob.status)
+
     return (result, prob.objective.value())
 
 if __name__ == '__main__':
-    original_name = input('input name: ')
+    original_name = input('input name: ') + "x"
 
     s = time.time()
-    xname = solver(original_name + "x")
+    xname = solver(original_name)
 
     print("time:", time.time() - s)
     print("{}は{}になりました".format(original_name, xname))

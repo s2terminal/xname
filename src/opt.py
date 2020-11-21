@@ -43,7 +43,7 @@ def func(ary: typing.List, i: int) -> typing.List:
     ret.extend([val])
     return ret
 
-def random_search_func(name: str, times=10):
+def random_search_map(name: str, times=10):
     original_name = name
     size = len(name)
     best_score = -float('inf')

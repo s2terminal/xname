@@ -16,5 +16,5 @@ if __name__ == '__main__':
     original_name = input('input name: ')
 
     print(xname(original_name, pulp_search.solver))
-    print(xname(original_name, opt.random_search_func))
+    print(xname(original_name, opt.random_search_map))
     print(xname(original_name, bruteforce.search_xname))
