@@ -7,6 +7,7 @@ from src import pulp_search
 from src import local_search
 
 def xname(name: str, method: Callable[[str], Tuple[str, float]], en_x: bool = True):
+    if (len(str(name)) <= 1): return (name, 0, method)
     name = name.lower()
     if en_x:
         name += "x"
