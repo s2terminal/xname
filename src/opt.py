@@ -1,6 +1,7 @@
 import random
 import Levenshtein
 import typing
+import math
 
 vowels = [ a for a in "aiueo" ]
 def name_score(name: str, original: str) -> int:
@@ -51,7 +52,7 @@ def random_search_func(name: str, times=10):
     best_score = -float('inf')
     best_name = name
     for _ in range(0, times):
-        x = random.randint(0, size - 1)
+        x = random.randint(0, math.factorial(size) - 1)
         name_ary = [a for a in name]
         tmp_name = "".join(func(name_ary, x))
 
