@@ -7,7 +7,7 @@ def local_search_base(original_name: str, neighbor_generator: Callable[[int], It
     best_score = -float('inf')
     best_name = ''.join(list(reversed(original_name)))
     for _ in range(times):
-        (tmp_name, tmp_score) = swap_two_base(best_name, neighbor_generator)
+        (tmp_name, tmp_score) = swap_two_base(best_name, original_name, neighbor_generator)
         if (best_score < tmp_score):
             best_score = tmp_score
             best_name = tmp_name
@@ -16,11 +16,11 @@ def local_search_base(original_name: str, neighbor_generator: Callable[[int], It
             break
     return (best_name, best_score)
 
-def swap_two_base(original_name: str, neighbor_generator: Callable[[int], Iterator[int]]):
+def swap_two_base(local_best_name: str, original_name: str, neighbor_generator: Callable[[int], Iterator[int]]):
     best_score = -float('inf')
-    best_name = original_name
-    for (i, j) in neighbor_generator(original_name):
-        tmp_name = swap_name(original_name, [i,j])
+    best_name = local_best_name
+    for (i, j) in neighbor_generator(local_best_name):
+        tmp_name = swap_name(local_best_name, [i,j])
         tmp_score = name_score(tmp_name, original_name)
         # print(tmp_name, tmp_score)
         if (best_score < tmp_score):

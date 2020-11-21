@@ -2,7 +2,7 @@ import time
 import pulp
 from pprint import pprint
 
-from src.common import vowels
+from src.common import vowels, name_score
 
 # 名前順列行列から文字列を復元する
 def target_name(xs, name: str):
@@ -10,33 +10,29 @@ def target_name(xs, name: str):
     start = 0
     # 最初の文字を探す
     for j in range(size):
-        if (all([xs[i][j].value() == 0 for i in range(size)])):
+        if (all([xs[i][j] == 0 for i in range(size)])):
             start = j
 
     # debug
     # for i in range(size):
     #     for j in range(size):
-    #         if xs[i][j].value() == 1:
-    #             print("debug: {}({}->{}): {}".format(xs[i][j], name[i], name[j], xs[i][j].value()))
+    #         if xs[i][j] == 1:
+    #             print("debug: {}({}->{}): {}".format(xs[i][j], name[i], name[j], xs[i][j]))
 
     ret = name[start]
     current = start
     for _ in range(size - 1):
         for j in range(size):
-            # print("{}({}->{}): {}".format(xs[current][j], name[current], name[j], xs[current][j].value()))
-            if xs[current][j].value() == 1:
-                # print("{}({}->{}): {}".format(xs[current][j], name[current], name[j], xs[current][j].value()))
+            if xs[current][j] == 1:
                 ret += name[j]
                 current = j
-                # break
+                break
     return ret
 
-def solver(name="sora"):
-    original_name = name
+def solver(name: str):
     size = len(name)
 
     # 問題の定義
-    print(pulp)
     prob = pulp.LpProblem('tsp', sense=pulp.LpMaximize)
 
     # 変数の生成
@@ -58,7 +54,6 @@ def solver(name="sora"):
                 cs[i].append(0)
 
     # 目的関数
-    # TODO: x[?][x_start]は評価に入れない
     prob += pulp.lpSum([pulp.lpDot(c, x) for c, x in zip(cs, xs)])
 
     # 制約条件
@@ -84,12 +79,13 @@ def solver(name="sora"):
     for i in range(size):
         prob += pulp.lpSum([xs[i][j] for j in range(size)]) + pulp.lpSum([xs[j][i] for j in range(size)]) >= 1
 
-    prob.solve()
-    print("score:", prob.objective.value())
-    result = target_name(xs, name)
-    # pprint([[x2.value() for x2 in x1] for x1 in xs])
+    pulp.PULP_CBC_CMD(msg=0, timeLimit=1, options = ['maxsol 1']).solve(prob)
+    xs = [[round(x2.value()) for x2 in x1] for x1 in xs]
+    if prob.status != 1: print(prob.status, pulp.LpStatus[prob.status])
+    # print("score:", prob.objective.value())
+    # pprint(xs)
     # pprint([u1 for u1 in u])
-    # print(prob.status)
+    result = target_name(xs, name)
 
     return (result, prob.objective.value())
 

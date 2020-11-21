@@ -8,8 +8,6 @@ def search_xname(original_name: str):
     for v in permutations([ n for n in original_name ]):
         name = "".join(v)
         score = name_score(name, original_name)
-        # if (max_score == score):
-        #     max_names.append(name)
         if (best_score < score):
             best_score = score
             best_name = name
