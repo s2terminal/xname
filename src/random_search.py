@@ -17,7 +17,7 @@ def random_search_base(name: str, name_generator: Callable[[str], str], times: i
             best_name = tmp_name
     return best_name, best_score
 
-def random_search_ary(name: str, times=10):
+def search_ary(name: str, times=10):
     def name_generator(name: str):
         size = len(name)
         x = [random.randint(0, size - 1) + i/size for i in range(0, size)]
@@ -26,7 +26,7 @@ def random_search_ary(name: str, times=10):
 
     return random_search_base(name, name_generator, times)
 
-def random_search_map(name: str, times=10):
+def search_map(name: str, times=10):
     def func(ary: List, i: int) -> List:
         n = len(ary)
         if n <= 1:
