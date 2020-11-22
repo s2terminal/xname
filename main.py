@@ -5,6 +5,7 @@ from src import bruteforce
 from src import random_search
 from src import pulp_search
 from src import local_search
+from src.common import name_score
 
 def xname(name: str, method: Callable[[str], Tuple[str, float]], en_x: bool = True):
     if (len(str(name)) <= 1): return (name, 0, method)
@@ -30,4 +31,4 @@ if __name__ == '__main__':
     print(xname(original_name, random_search.search_map, en_x))
     print(xname(original_name, local_search.search_swap_two_any, en_x))
     print(xname(original_name, local_search.search_swap_two_adjacent, en_x))
-    print(xname(original_name, bruteforce.search_xname, en_x))
+    # print(xname(original_name, bruteforce.search_xname, en_x))
